@@ -1,0 +1,85 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          hadoop tasktracker services
+# Required-Start:    $network
+# Required-Stop:     $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description:       Hadoop tasktracker services
+# Short-Description: Enable Hadoop tasktracker services including hdfs
+### END INIT INFO
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+HADOOP_DIR=<%= @hadoop_dir %>
+HADOOP_BIN=$HADOOP_DIR/bin
+HADOOP_LOG_DIR=$HADOOP_DIR/logs
+USER=<%= @hadoop_user %>
+NAME=hadoop_tasktracker
+DESC=hadoop_tasktracker
+ROTATE_SUFFIX=
+test -x $HADOOP_BIN || exit 0
+RETVAL=0
+set -e
+cd /
+
+start_hadoop () {
+    set +e
+    su $USER -s /bin/sh -c "$HADOOP_BIN/hadoop-daemon.sh start tasktracker > $HADOOP_LOG_DIR/startup_tasktracker_log"
+    case "$?" in
+      0)
+        echo SUCCESS
+        RETVAL=0
+        ;;
+      1)
+        echo TIMEOUT - check $HADOOP_LOG_DIR/startup_tasktracker_log
+        RETVAL=1
+        ;;
+      *)
+        echo FAILED - check $HADOOP_LOG_DIR/startup_tasktracker_log
+        RETVAL=1
+        ;;
+    esac
+    set -e
+}
+
+stop_hadoop () {
+    set +e
+    if [ $RETVAL = 0 ] ; then
+        su $USER -s /bin/sh -c "$HADOOP_BIN/hadoop-daemon.sh start tasktracker> $HADOOP_LOG_DIR/shutdown_tasktracker_log"
+        RETVAL=$?
+        if [ $RETVAL != 0 ] ; then
+            echo FAILED - check $HADOOP_LOG_DIR/shutdown_tasktracker_log
+        fi
+    else
+        echo No nodes running
+        RETVAL=0
+    fi
+    set -e
+}
+
+restart_hadoop() {
+    stop_hadoop
+    start_hadoop
+}
+
+case "$1" in
+    start)
+        echo -n "Starting $DESC: "
+        start_hadoop
+        echo "$NAME."
+        ;;
+    stop)
+        echo -n "Stopping $DESC: "
+        stop_hadoop
+        echo "$NAME."
+        ;;
+    force-reload|restart)
+        echo -n "Restarting $DESC: "
+        restart_hadoop
+        echo "$NAME."
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|force-reload}" >&2
+        RETVAL=1
+        ;;
+esac
+exit $RETVAL

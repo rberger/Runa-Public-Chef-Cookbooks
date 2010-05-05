@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<property>
+  <name>hbase.rootdir</name>
+  <value>hdfs://<%= @hbase_master_host %>:8020/hbase</value>
+</property>
+<property>
+  <name>hbase.cluster.distributed</name>
+  <value>true</value>
+</property>
+<property>
+  <name>hbase.zookeeper.quorum</name>
+  <value><%= @zookeeper_quorum %></value>
+</property>
+<property>
+  <name>hbase.regionserver.handler.count</name>
+  <value>100</value>
+</property>
+<property>
+  <name>hbase.hregion.memstore.block.multiplier</name>
+  <value>3</value>
+</property>
+<property>
+  <name>hbase.hstore.blockingStoreFiles</name>
+  <value>15</value>
+</property>
+<property>
+  <name>dfs.replication</name>
+  <value>3</value>
+</property>
+<property>
+  <name>dfs.client.block.write.retries</name>
+  <value>100</value>
+</property>
+<property>
+  <name>zookeeper.session.timeout</name>
+  <value>60000</value>
+</property>
+<property>
+  <name>hbase.tmp.dir</name>
+  <value>/mnt/hbase</value>
+</property>
+</configuration>

@@ -1,0 +1,155 @@
+= DESCRIPTION:
+Along with the Hadoop Cookbook, builds a HBase / Hadoop Cluster suitable for using with Map/Reduce and HBase. 
+It is a literal translation of the ec2scripts in the HBase contrib of HBase 0.20.x.
+
+This HBase Cookbook assumes its part of an HBase / Hadoop Cluster and has many databag or attribute elements based on HBase.
+It assumes that the HBase Master and the Hadoop Primary, Secondary Nameservers are the same machine and that HBase Regionservers and Hadoop slaves are also together.
+(TODO: Make at least the secondary Nameserver on another machine). 
+Having multiple Zookeepers on other machines than the HBase Master has not been tested.
+
+This should be refactored to be independent and support more flexible layouts of the cluster, but not by me for now. Or more likely into a single HBase recipe similar to the single Database cookbook that goes with the new Opscode Application / Database meta cookbooks.
+
+It is driven by Databags more than Attributes and is designed to be tied to an Application via databag item[s] in the apps databag.
+
+
+= REQUIREMENTS:
+
+* hadoop
+* java
+
+= ATTRIBUTES: 
+
+* app_environment - Should be set to the runtime environment, such as testing, staging or production.
+These can be set in a role named for the environment and included as a role in the run_list.
+
+= USAGE:
+
+== ROLES:
+Create an hbase_master role with the following recipes:
+"ulimits", "hadoop", "hadoop::master", "hbase", "hbase::master"
+
+Create an hbase_regionserver role with the following recipes:
+"ulimits", "hadoop", "hadoop::slave", "hbase", "hbase::regionserver"
+
+Both roles should have the ulimits_list along the lines:
+override_attributes({
+  "ulimits_list" =>  [
+    {
+    :domain => "hadoop",
+    :type => "soft",
+    :item => "nofile",
+    :value => 32768
+    },
+    {
+    :domain => "hadoop",
+    :type => "hard",
+    :item => "nofile",
+    :value => 32768
+    } 
+  ]
+})
+
+== DATABAG
+
+There should be one or more databag items in the apps databag that links the HBase cluster to an application.
+
+The HBase/Hadoop cookbooks expect the following attributes in one or more items in the apps databag:
+
+* zookeeper_role - Set it to the role[s] that will be the zookeepers[s]. It can be the same as hbase masters and hbase regionservers or separate server[s]
+* hbase_master_role - Set it to the role[s] that will be the hbase master[s]
+* hbase_regionserver_role - Set it to the role[s] that will be the hbase regionservers
+* hadoop_master_role - Set it to the role that will be the hadoo master (Usually the same as the hbase maste)
+* hadoop_slave_role - Set it to the role[s] that will be the hadoop slaves (Usually the same as the hbase regionservers)
+
+Example Where there are only two instance roles being assigned to all meta roles:
+"zookeeper_role": [
+ "hbase_master"
+ ],
+ "hbase_regionserver_role": [
+ "hbase_regionserver"
+ ],
+ "hbase_master_role": [
+ "hbase_master"
+ ],
+ "hadoop_slave_role": [
+ "hbase_regionserver"
+ ],
+ "hadoop_master_role": [
+ "hbase_master"
+ ]
+
+There are also json objects for the following to configure templates and things:
+
+* hadoop
+** home
+** top
+** user_home
+** user
+** group
+** revision
+*** production
+*** staging
+*** testing
+
+An example:
+"hadoop": {
+  "home": "/mnt/hadoop",
+  "top": "/mnt",
+  "user_home": "/home/hadoop",
+  "user": "hadoop",
+  "group": "hadoop",
+  "revision": {
+    "production": "0.20.1",
+    "staging": "0.20.1",
+    "testing": "0.20.1"
+  }
+}
+
+* hbase
+** home
+** top
+** revision
+*** production
+*** staging
+*** testing
+
+An example:
+"hbase": {
+  "home": "/mnt/hbase",
+  "top": "/mnt",
+  "revision": {
+    "production": "0.20.3",
+    "staging": "0.20.3",
+    "testing": "0.20.3"
+  }
+}
+
+* zookeeper
+** home
+** top
+** revision
+*** production
+*** staging
+*** testing
+
+An example:
+"zookeeper": {
+  "revision": {
+    "production": "3.2.1",
+    "staging": "3.2.1",
+    "testing": "3.2.1"
+  }
+}
+
+== RUNTIME
+
+The recipe creates startup files in /etc/init.d
+
+* hadoop_master
+* hadoop_datanode
+* hadoop_tasktracker
+* hbase_master
+* hbase_regionserver
+
+/etc/init.d/hadoop start or stop on the master, it will start or stop all the hadoop daemons for all the nodes in the cluster.
+Same with /etc/init.d/hbase start or stop on the master.
