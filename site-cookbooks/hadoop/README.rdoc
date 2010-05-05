@@ -1,8 +1,28 @@
 = DESCRIPTION:
+Along with the HBase Cookbook, builds a HBase / Hadoop Cluster suitable for using with Map/Reduce and HBase. 
+It is a literal translation of the ec2scripts in the HBase contrib of HBase 0.20.x.
+
+This Hadoop Cookbook assumes its part of an HBase Cluster and has many databag or attribute elements based on HBase.
+It assumes that the HBase Master and the Hadoop Primary, Secondary Nameservers are the same machine and that HBase Regionservers and Hadoop slaves are also together.
+(TODO: Make at least the secondary Nameserver on another machine). 
+Having multiple Zookeepers on other machines than the HBase Master has not been tested.
+
+This should be refactored to be independent and support more flexible layouts of the cluster, but not by me for now. Or into a single HBase recipe.
+
+This cookbook is in the style of the new Opscode Application / Database meta cookbooks. 
+It is driven by Databags more than Attributes and is designed to be tied to an Application via databag item[s] in the apps databag.
+
 
 = REQUIREMENTS:
 
+* hbase
+* java
+* ssh_known_hosts (I'm not sure if this is really needed but its included in the Recipe)
+
 = ATTRIBUTES: 
+
+* none
 
 = USAGE:
 
+See the USAGE info for the HBase Recipe. If you set things up for the HBase recipe, this Hadoop Cookbook will work.
