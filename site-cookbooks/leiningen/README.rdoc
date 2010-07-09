@@ -1,0 +1,15 @@
+= DESCRIPTION:
+
+Installs leiningen from the built image on github (http://github.com/technomancy/leiningen/raw/stable/bin/lein)
+Once its installed, it can be called by other recipes.
+
+= REQUIREMENTS:
+
+none
+
+= ATTRIBUTES: 
+
+none
+
+= USAGE:
+

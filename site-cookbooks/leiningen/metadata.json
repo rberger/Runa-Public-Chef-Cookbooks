@@ -1,0 +1,39 @@
+{
+  "recipes": {
+
+  },
+  "replacing": {
+
+  },
+  "description": "Installs/Configures leiningen",
+  "groupings": {
+
+  },
+  "long_description": "= DESCRIPTION:\n\nInstalls leiningen from the built image on github (http://github.com/technomancy/leiningen/raw/stable/bin/lein)\nOnce its installed, it can be called by other recipes.\n\n= REQUIREMENTS:\n\nnone\n\n= ATTRIBUTES: \n\nnone\n\n= USAGE:\n\n",
+  "attributes": {
+
+  },
+  "recommendations": {
+
+  },
+  "dependencies": {
+
+  },
+  "platforms": {
+
+  },
+  "maintainer": "Runa Inc.",
+  "version": "0.1.0",
+  "suggestions": {
+
+  },
+  "maintainer_email": "ops@runa.com",
+  "conflicting": {
+
+  },
+  "name": "leiningen",
+  "license": "Apache 2.0",
+  "providing": {
+
+  }
+}
