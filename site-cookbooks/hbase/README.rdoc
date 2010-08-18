@@ -26,12 +26,15 @@ These can be set in a role named for the environment and included as a role in t
 
 == ROLES:
 Create an hbase_master role with the following recipes:
+
 "ulimits", "hadoop", "hadoop::master", "hbase", "hbase::master"
 
 Create an hbase_regionserver role with the following recipes:
+
 "ulimits", "hadoop", "hadoop::slave", "hbase", "hbase::regionserver"
 
 Both roles should have the ulimits_list along the lines:
+
 override_attributes({
   "ulimits_list" =>  [
     {
@@ -62,6 +65,7 @@ The HBase/Hadoop cookbooks expect the following attributes in one or more items 
 * hadoop_slave_role - Set it to the role[s] that will be the hadoop slaves (Usually the same as the hbase regionservers)
 
 Example Where there are only two instance roles being assigned to all meta roles:
+
 "zookeeper_role": [
  "hbase_master"
  ],
@@ -81,17 +85,27 @@ Example Where there are only two instance roles being assigned to all meta roles
 There are also json objects for the following to configure templates and things:
 
 * hadoop
+
 ** home
+
 ** top
+
 ** user_home
+
 ** user
+
 ** group
+
 ** revision
+
 *** production
+
 *** staging
+
 *** testing
 
 An example:
+
 "hadoop": {
   "home": "/mnt/hadoop",
   "top": "/mnt",
@@ -106,14 +120,21 @@ An example:
 }
 
 * hbase
+
 ** home
+
 ** top
+
 ** revision
+
 *** production
+
 *** staging
+
 *** testing
 
 An example:
+
 "hbase": {
   "home": "/mnt/hbase",
   "top": "/mnt",
@@ -125,14 +146,21 @@ An example:
 }
 
 * zookeeper
+
 ** home
+
 ** top
+
 ** revision
+
 *** production
+
 *** staging
+
 *** testing
 
 An example:
+
 "zookeeper": {
   "revision": {
     "production": "3.2.1",
